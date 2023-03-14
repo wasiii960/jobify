@@ -2,6 +2,7 @@
 import main from "../assets/images/main.svg";
 import Wrapper from "../assets/wrappers/LandingPage";
 import {Logo} from '../components'
+import {Link} from 'react-router-dom';
 const Landing = () => {
   return (
     <Wrapper>
@@ -18,7 +19,7 @@ const Landing = () => {
             intelligentsia aesthetic kitsch live-edge. Gluten-free fixie prism
             semiotics.
           </p>
-          <button className="btn btn-heri">Login/Register</button>
+          <Link to="/register" className="btn btn-hero">Login/Register</Link>
         </div>
         <img src={main} alt="job hunt" className="img main-img" />
       </div>
