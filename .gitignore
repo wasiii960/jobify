@@ -9957,3 +9957,4 @@ node_modules/figures/package.json
 node_modules/figures/readme.md
 node_modules/file-entry-cache/LICENSE
 node_modules/file-entry-cache/README.md
+.env
