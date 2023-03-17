@@ -1,3 +1,5 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
 const FormRow = ({type,name,value,handleChange,labelText}) => {
   return (
     <div className="form-row">
