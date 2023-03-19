@@ -11,7 +11,13 @@ import connectDB from "./db/connect.js";
 //routers
 import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobRoutes.js";
+//logger
+import morgan from "morgan";
 
+
+if(process.env.NODE_ENV !=='production'){
+  // app.use(morgan);
+}
 app.use(express.json());
 
 app.get("/", (req, res) => {
