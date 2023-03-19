@@ -1,13 +1,28 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {Dashboard,Landing,Register,Error} from './pages'
-import React from 'react'
-import ReactDOM from 'react-dom'
+import { Landing, Register, Error, ProtectedRoute } from "./pages";
+import {
+  Stats,
+  SharedLayout,
+  Profile,
+  AllJobs,
+  AddJobs,
+} from "./pages/dashboard";
+import React from "react";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" exact element={<Dashboard/>} />
-        <Route path="/register" exact element={<Register/>} />
+        <Route path="/" element={
+          <ProtectedRoute>
+            <SharedLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Stats />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="all-jobs" element={<AllJobs />} />
+          <Route path="add-jobs" element={<AddJobs />} />
+        </Route>
+        <Route path="/register" exact element={<Register />} />
         <Route
           path="/landing"
           exact
@@ -17,7 +32,7 @@ function App() {
             </div>
           }
         />
-        <Route path="*" exact element={<Error/>} />
+        <Route path="*" exact element={<Error />} />
       </Routes>
     </BrowserRouter>
   );
