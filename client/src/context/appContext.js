@@ -7,6 +7,9 @@ import {
   REGISTER_USER_ERROR,
   REGISTER_USER_SUCCESS,
   TOGGLE_SIDEBAR,
+  UPDATE_USER_BEGIN,
+  UPDATE_USER_ERROR,
+  UPDATE_USER_SUCCESS,
 } from "./action";
 import reducer from "./reducer";
 import axios from "axios";
@@ -24,13 +27,33 @@ const initialState = {
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
   showSidebar: false,
-  token:token
+  token: token,
 };
 
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const authFetch = axios.create({
+    baseURL: "/api/v1",
+  });
+  authFetch.interceptors.request.use(
+    (config) => {
+      config.headers["Authorization"] = `Bearer ${state.token}`;
+      return config;
+    },
+    (error) => {
+      Promise.reject(error);
+    }
+  );
+  authFetch.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      console.log(error.response);
+    }
+  );
   const displayAlert = () => {
     dispatch({ type: DISPLAY_ALERT });
     clearAlert();
@@ -86,9 +109,20 @@ const AppProvider = ({ children }) => {
     dispatch({ type: LOGOUT_USER });
     removeUserFromLocalStorage();
   };
-  const updateUser =(currentUser)=>{
-    console.log(currentUser);
-  }
+  const updateUser = async (currentUser) => {
+    dispatch({ type: UPDATE_USER_BEGIN });
+    try {
+      console.log(currentUser)
+
+      const  {data}  = await authFetch.patch("/auth/update-user", currentUser);
+      const { user, location } = data;
+      dispatch({ type: UPDATE_USER_SUCCESS, payload: { user, location } });
+      addUserToLocalStorage({user,token,location});
+    } catch (error) {
+      dispatch({ type: UPDATE_USER_ERROR, payload: error.response.data });
+    }
+    clearAlert();
+  };
   return (
     <AppContext.Provider
       value={{
@@ -98,7 +132,7 @@ const AppProvider = ({ children }) => {
         loginUser,
         toggleSidebar,
         logoutUser,
-        updateUser
+        updateUser,
       }}
     >
       {children}
