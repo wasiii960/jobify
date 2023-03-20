@@ -46,7 +46,19 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json({ user, token, location: user.location });
 };
 const updateUser = async (req, res) => {
-  res.send("updateUser");
+  const {name,lastName,email,location} = req.body;
+  if(!name || !lastName || !email || !location){
+    throw new CustomApiError('Please provide all values',StatusCodes.BAD_REQUEST);
+  }
+  const user = await User.findOne({_id:req.user.userId});
+
+  user.name = name;
+  user.lastName = lastName;
+  user.email = email;
+  user.location = location;
+
+  await user.save();
+  res.status(StatusCodes.OK).json({user:user,location:user.location})
 };
 
 export { register, login, updateUser };
