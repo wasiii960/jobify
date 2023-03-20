@@ -23,7 +23,7 @@ const initialState = {
   user: user ? JSON.parse(user) : null,
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
-  toggleSidebar: false,
+  showSidebar: false,
   token:token
 };
 

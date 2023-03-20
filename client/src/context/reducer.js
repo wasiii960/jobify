@@ -80,7 +80,7 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === TOGGLE_SIDEBAR) {
-    return { ...state, toggleSidebar: !state.toggleSidebar };
+    return { ...state, showSidebar: !state.showSidebar };
   }
   if(action.type === LOGOUT_USER){
     return {
