@@ -1,5 +1,14 @@
+import Job from '../models/Job.js'
+import HttpStatusCode from 'http-status-codes';
+import {CustomApiError} from '../errors/index.js';
 const createJobs = async (req, res) => {
-  res.send("create jobs");
+  const {position,company} = req.body;
+  if(!position || !company){
+    throw new CustomApiError('Please provide all values',HttpStatusCode.BAD_REQUEST);
+  }
+  req.body.createdBy = req.user.userId;
+  const job = await Job.create(req.body);
+  res.status(HttpStatusCode.CREATED).json({job});
 };
 
 const showStats = async (req, res) => {
