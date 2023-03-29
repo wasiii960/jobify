@@ -11,7 +11,12 @@ import {
   LOGOUT_USER,
   UPDATE_USER_BEGIN,
   UPDATE_USER_SUCCESS,
-  UPDATE_USER_ERROR
+  UPDATE_USER_ERROR,
+  HANDLE_CHANGE,
+  CLEAR_VALUES,
+  CREATE_JOB_BEGIN,
+  CREATE_JOB_SUCCESS,
+  CREATE_JOB_ERROR,
 } from "./action";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -85,31 +90,31 @@ const reducer = (state, action) => {
   if (action.type === TOGGLE_SIDEBAR) {
     return { ...state, showSidebar: !state.showSidebar };
   }
-  if(action.type === LOGOUT_USER){
+  if (action.type === LOGOUT_USER) {
     return {
       ...initialState,
-      user:null,
-      token:null,
-      userLocation:'',
-      jobLocation:''
-    }
+      user: null,
+      token: null,
+      userLocation: "",
+      jobLocation: "",
+    };
   }
-  if(action.type === UPDATE_USER_BEGIN){
+  if (action.type === UPDATE_USER_BEGIN) {
     return {
       ...state,
-      isLoading:true
-    }
+      isLoading: true,
+    };
   }
-  if(action.type === UPDATE_USER_ERROR){
+  if (action.type === UPDATE_USER_ERROR) {
     return {
       ...state,
-      isLoading:false,
+      isLoading: false,
       showAlert: true,
       alertText: action.payload.msg,
       alertType: "danger",
-    }
+    };
   }
-  if(action.type === UPDATE_USER_SUCCESS){
+  if (action.type === UPDATE_USER_SUCCESS) {
     return {
       ...state,
       isLoading: false,
@@ -119,7 +124,52 @@ const reducer = (state, action) => {
       showAlert: true,
       alertText: "User updated successfuly",
       alertType: "success",
-    }
+    };
+  }
+  if (action.type === CLEAR_VALUES) {
+    const initialState = {
+      jobLocation: state.userLocation,
+      isEditing: false,
+      editJobId: "",
+      company: "",
+      position: "",
+      jobType: "full-time",
+      status: "pending",
+    };
+    return {
+      ...state,
+      ...initialState
+    };
+  }
+  if (action.type === HANDLE_CHANGE) {
+    return {
+      ...state,
+      [action.payload.name]: action.payload.value,
+    };
+  }
+  if (action.type === CREATE_JOB_BEGIN) {
+    return {
+      ...state,
+      isLoading:true
+    };
+  }
+  if (action.type === CREATE_JOB_SUCCESS) {
+    return {
+      ...state,
+      isLoading:false,
+      showAlert:true,
+      alertType:'success',
+      alertText:'New Job Created...'
+    };
+  }
+  if (action.type === CREATE_JOB_ERROR) {
+    return {
+      ...state,
+      isLoading:false,
+      showAlert:true,
+      alertType:'danger',
+      alertText:action.payload.msg
+    };
   }
   throw new Error(`no such action : ${action.type}`);
 };

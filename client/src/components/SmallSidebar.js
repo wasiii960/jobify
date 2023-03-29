@@ -8,7 +8,6 @@ const SmallSidebar = () => {
   const { showSidebar, toggleSidebar } = useAppContext();
   return (
     <Wrapper>
-      Small Sidebar
       <div
         className={
           showSidebar ? "sidebar-container show-sidebar" : "sidebar-container"

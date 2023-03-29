@@ -12,7 +12,12 @@ import {
   UPDATE_USER_SUCCESS,
   LOGIN_USER_BEGIN,
   LOGIN_USER_SUCCESS,
-  LOGIN_USER_ERROR
+  LOGIN_USER_ERROR,
+  HANDLE_CHANGE,
+  CLEAR_VALUES,
+  CREATE_JOB_BEGIN,
+  CREATE_JOB_SUCCESS,
+  CREATE_JOB_ERROR,
 } from "./action";
 import reducer from "./reducer";
 import axios from "axios";
@@ -31,6 +36,14 @@ const initialState = {
   jobLocation: userLocation || "",
   showSidebar: false,
   token: token,
+  isEditing: false,
+  editJobId: "",
+  company: "",
+  position: "",
+  jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
+  jobType: "full-time",
+  statusOptions: ["interview", "declined", "pending"],
+  status: "pending",
 };
 
 const AppContext = React.createContext();
@@ -138,6 +151,33 @@ const AppProvider = ({ children }) => {
     }
     clearAlert();
   };
+  const handleChange = ({ name, value }) => {
+    dispatch({ type: HANDLE_CHANGE, payload: { name, value } });
+  };
+  const clearValues = () => {
+    dispatch({ type: CLEAR_VALUES });
+  };
+  const addJob = async () => {
+    try {
+      const { position, company, jobLocation, status, jobType } = state;
+      dispatch({ type: CREATE_JOB_BEGIN });
+      await authFetch.post("/jobs", {
+        position,
+        company,
+        jobLocation,
+        status,
+        jobType,
+      });
+      dispatch({ type: CREATE_JOB_SUCCESS });
+      dispatch({type:CLEAR_VALUES})
+      clearAlert();
+
+    } catch (error) {
+      if(error.response.status === 401)return;
+      dispatch({type:CREATE_JOB_ERROR, payload: error.response.data })
+      clearAlert();
+    }
+  };
   return (
     <AppContext.Provider
       value={{
@@ -148,6 +188,9 @@ const AppProvider = ({ children }) => {
         toggleSidebar,
         logoutUser,
         updateUser,
+        handleChange,
+        clearValues,
+        addJob
       }}
     >
       {children}
