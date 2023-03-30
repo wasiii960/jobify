@@ -18,6 +18,8 @@ import {
   CREATE_JOB_BEGIN,
   CREATE_JOB_SUCCESS,
   CREATE_JOB_ERROR,
+  GET_JOBS_BEGIN,
+  GET_JOBS_SUCCESS,
 } from "./action";
 import reducer from "./reducer";
 import axios from "axios";
@@ -44,6 +46,10 @@ const initialState = {
   jobType: "full-time",
   statusOptions: ["interview", "declined", "pending"],
   status: "pending",
+  jobs: [],
+  totalJobs: 0,
+  numOfPages: 1,
+  page: 1,
 };
 
 const AppContext = React.createContext();
@@ -169,14 +175,37 @@ const AppProvider = ({ children }) => {
         jobType,
       });
       dispatch({ type: CREATE_JOB_SUCCESS });
-      dispatch({type:CLEAR_VALUES})
+      dispatch({ type: CLEAR_VALUES });
       clearAlert();
-
     } catch (error) {
-      if(error.response.status === 401)return;
-      dispatch({type:CREATE_JOB_ERROR, payload: error.response.data })
+      if (error.response.status === 401) return;
+      dispatch({ type: CREATE_JOB_ERROR, payload: error.response.data });
       clearAlert();
     }
+  };
+  const getJobs = async () => {
+    let url = `/jobs`;
+    dispatch({ type: GET_JOBS_BEGIN });
+    try {
+      const { data } = await authFetch(url);
+      const { jobs, totalJobs, numOfPages } = data;
+      dispatch({
+        type: GET_JOBS_SUCCESS,
+        payload: { jobs, totalJobs, numOfPages },
+      });
+    } catch (error) {
+      console.log(error.response);
+      if (error.response.status === 401) {
+        logoutUser();
+      }
+    }
+    clearAlert();
+  };
+  const setEditJob = (id) => {
+    console.log(id);
+  };
+  const deleteJob = (id) => {
+    console.log(id);
   };
   return (
     <AppContext.Provider
@@ -190,7 +219,10 @@ const AppProvider = ({ children }) => {
         updateUser,
         handleChange,
         clearValues,
-        addJob
+        addJob,
+        getJobs,
+        setEditJob,
+        deleteJob,
       }}
     >
       {children}
