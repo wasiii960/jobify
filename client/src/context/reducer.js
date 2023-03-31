@@ -19,6 +19,10 @@ import {
   CREATE_JOB_ERROR,
   GET_JOBS_BEGIN,
   GET_JOBS_SUCCESS,
+  SET_EDIT_JOB,
+  DELETE_JOB_BEGIN,
+  EDIT_JOB_BEGIN,
+  EDIT_JOB_SUCCESS,
 } from "./action";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -187,6 +191,51 @@ const reducer = (state, action) => {
       jobs: action.payload.jobs,
       numOfPages: action.payload.numOfPages,
       totalJobs: action.payload.totalJobs,
+    };
+  }
+  if (action.type === SET_EDIT_JOB) {
+    const job = state.jobs.find(job=>job._id === action.payload.id)
+    const {_id,company,jobLocation,position,jobType,status} = job;
+    return {
+      ...state,
+      isEditing:true,
+      editJobId:_id,
+      company,
+      jobLocation,
+      position,
+      jobType,
+      status
+    };
+  }
+  if (action.type === DELETE_JOB_BEGIN) {
+    return {
+      ...state,
+      isLoading:true
+    };
+  }
+  if (action.type === EDIT_JOB_BEGIN) {
+    return {
+      ...state,
+      isLoading:true,
+      isEditing:true
+    };
+  }
+  if (action.type === EDIT_JOB_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert:true,
+      alertType:'success',
+      alertText:'Job updated successfuly'
+    };
+  }
+  if (action.type === EDIT_JOB_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      showAlert:true,
+      alertType:'danger',
+      alertText:action.payload.msg
     };
   }
   throw new Error(`no such action : ${action.type}`);
