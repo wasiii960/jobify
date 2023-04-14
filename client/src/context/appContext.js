@@ -24,6 +24,8 @@ import {
   DELETE_JOB_BEGIN,
   EDIT_JOB_BEGIN,
   EDIT_JOB_SUCCESS,
+  SHOW_STATS_BEGIN,
+  SHOW_STATS_SUCCESS,
 } from "./action";
 import reducer from "./reducer";
 import axios from "axios";
@@ -54,6 +56,8 @@ const initialState = {
   totalJobs: 0,
   numOfPages: 1,
   page: 1,
+  stats: {},
+  monthlyApplications: [],
 };
 
 const AppContext = React.createContext();
@@ -219,11 +223,11 @@ const AppProvider = ({ children }) => {
         status,
         jobType,
       });
-      dispatch({type:CLEAR_VALUES})
-      dispatch({type:EDIT_JOB_SUCCESS})
+      dispatch({ type: CLEAR_VALUES });
+      dispatch({ type: EDIT_JOB_SUCCESS });
       //getJobs();
     } catch (error) {
-      dispatch({type:EDIT_JOB_SUCCESS,payload: error.response.data})
+      dispatch({ type: EDIT_JOB_SUCCESS, payload: error.response.data });
       console.log(error);
     }
     clearAlert();
@@ -236,6 +240,22 @@ const AppProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+  const showStats = async () => {
+    dispatch({ type: SHOW_STATS_BEGIN });
+    try {
+      const { data } = await authFetch("/jobs/stats");
+      dispatch({
+        type: SHOW_STATS_SUCCESS,
+        payload: {
+          stats: data.defaultStats,
+          monthlyApplications: data.monthlyApplications,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    clearAlert();
   };
   return (
     <AppContext.Provider
@@ -254,6 +274,7 @@ const AppProvider = ({ children }) => {
         setEditJob,
         deleteJob,
         editJob,
+        showStats
       }}
     >
       {children}

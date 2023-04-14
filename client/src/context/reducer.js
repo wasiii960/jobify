@@ -23,6 +23,8 @@ import {
   DELETE_JOB_BEGIN,
   EDIT_JOB_BEGIN,
   EDIT_JOB_SUCCESS,
+  SHOW_STATS_BEGIN,
+  SHOW_STATS_SUCCESS,
 } from "./action";
 import { initialState } from "./appContext";
 const reducer = (state, action) => {
@@ -194,48 +196,63 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === SET_EDIT_JOB) {
-    const job = state.jobs.find(job=>job._id === action.payload.id)
-    const {_id,company,jobLocation,position,jobType,status} = job;
+    const job = state.jobs.find((job) => job._id === action.payload.id);
+    const { _id, company, jobLocation, position, jobType, status } = job;
     return {
       ...state,
-      isEditing:true,
-      editJobId:_id,
+      isEditing: true,
+      editJobId: _id,
       company,
       jobLocation,
       position,
       jobType,
-      status
+      status,
     };
   }
   if (action.type === DELETE_JOB_BEGIN) {
     return {
       ...state,
-      isLoading:true
+      isLoading: true,
     };
   }
   if (action.type === EDIT_JOB_BEGIN) {
     return {
       ...state,
-      isLoading:true,
-      isEditing:true
+      isLoading: true,
+      isEditing: true,
     };
   }
   if (action.type === EDIT_JOB_SUCCESS) {
     return {
       ...state,
       isLoading: false,
-      showAlert:true,
-      alertType:'success',
-      alertText:'Job updated successfuly'
+      showAlert: true,
+      alertType: "success",
+      alertText: "Job updated successfuly",
     };
   }
   if (action.type === EDIT_JOB_SUCCESS) {
     return {
       ...state,
       isLoading: false,
-      showAlert:true,
-      alertType:'danger',
-      alertText:action.payload.msg
+      showAlert: true,
+      alertType: "danger",
+      alertText: action.payload.msg,
+    };
+  }
+  if (action.type === SHOW_STATS_BEGIN) {
+    return {
+      ...state,
+      isLoading: true,
+      showAlert: false,
+    };
+  }
+  if (action.type === SHOW_STATS_SUCCESS) {
+    return {
+      ...state,
+      isLoading: false,
+      stats: action.payload.stats,
+      monthlyApplications: action.payload.monthlyApplications,
     };
   }
   throw new Error(`no such action : ${action.type}`);
